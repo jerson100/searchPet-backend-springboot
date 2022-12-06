@@ -35,7 +35,7 @@ public class TypePetController {
     }
 
     @GetMapping("{idTypePet}")
-    public ResponseEntity<TypePet> getTypePetById(@PathVariable("idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado tiene el formato incorrecto") @Valid String id){
+    public ResponseEntity<TypePet> getTypePetById(@PathVariable("idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado no tiene el formato correcto") @Valid String id){
         TypePet typePet = typePetService.findPetById(id);
         return  ResponseEntity.ok(typePet);
     }
@@ -46,13 +46,13 @@ public class TypePetController {
     }
 
     @DeleteMapping(value="{idTypePet}")
-    public ResponseEntity deleteTypePetById(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado tiene el formato incorrecto") @Valid String id) {
+    public ResponseEntity deleteTypePetById(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado no tiene el formato correcto") @Valid String id) {
         typePetService.deleteTypePetById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping(value="{idTypePet}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<TypePet> updateOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$") @Valid String id, @RequestBody @Valid PutTypePet typePet){
+    public ResponseEntity<TypePet> updateOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado no tiene el formato correcto") @Valid String id, @RequestBody @Valid PutTypePet typePet){
         TypePet tp = TypePet.builder()
                 .type(typePet.getType())
                 ._id(id)
@@ -63,7 +63,7 @@ public class TypePetController {
     }
 
     @PatchMapping(value="{idTypePet}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<TypePet> patchOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$") @Valid String id, @RequestBody @Valid PatchTypePet typePet){
+    public ResponseEntity<TypePet> patchOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado no tiene el formato correcto") @Valid String id, @RequestBody @Valid PatchTypePet typePet){
         TypePet tp = TypePet.builder()
                 .type(typePet.getType())
                 .description(typePet.getDescription())

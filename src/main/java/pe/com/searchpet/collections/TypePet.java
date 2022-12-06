@@ -2,6 +2,7 @@ package pe.com.searchpet.collections;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Document(collection = "typepets")
 public class TypePet {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Id
     private String _id;
     @NotNull(message = "El tipo de mascota es requerido")
     @NotBlank(message = "El tipo de mascota no debe contener solo espacios en blanco")

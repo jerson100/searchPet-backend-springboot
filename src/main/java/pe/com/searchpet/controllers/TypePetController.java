@@ -1,7 +1,7 @@
 package pe.com.searchpet.controllers;
 
 import jakarta.validation.Valid;
-import org.bson.types.ObjectId;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.TypePet;
-import pe.com.searchpet.services.TypePetService;
+import pe.com.searchpet.services.TypePetServiceImpl;
 
 import java.util.List;
 
@@ -23,18 +23,17 @@ public class TypePetController {
     private Logger LOG = LoggerFactory.getLogger(TypePetController.class);
 
     @Autowired
-    private TypePetService typePetService;
+    private TypePetServiceImpl typePetService;
 
     @PostMapping(value = "",
             produces = {MediaType.APPLICATION_JSON_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity createType(@RequestBody @Valid TypePet typePetBody){
-        LOG.info("created typepet");
+    public ResponseEntity<TypePet> createType(@RequestBody @Valid TypePet typePetBody){
         return new ResponseEntity<>(typePetService.createPet(typePetBody), HttpStatus.CREATED);
-    };
+    }
 
     @GetMapping("{idTypePet}")
-    public ResponseEntity<TypePet> getTypePetById(@PathVariable("idTypePet") ObjectId id){
+    public ResponseEntity<TypePet> getTypePetById(@PathVariable("idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado tiene el formato incorrecto") @Valid String id){
         TypePet typePet = typePetService.findPetById(id);
         return  ResponseEntity.ok(typePet);
     }
@@ -42,6 +41,12 @@ public class TypePetController {
     @GetMapping(value="")
     public List<TypePet> getAllBreeds(){
         return typePetService.findAll();
+    }
+
+    @DeleteMapping(value="{idTypePet}")
+    public ResponseEntity deleteTypePetById(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado tiene el formato incorrecto") @Valid String id) {
+        typePetService.deleteTypePetById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

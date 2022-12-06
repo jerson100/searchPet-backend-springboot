@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.TypePet;
+import pe.com.searchpet.models.PatchTypePet;
 import pe.com.searchpet.models.PutTypePet;
 import pe.com.searchpet.services.TypePetServiceImpl;
 
@@ -57,6 +58,17 @@ public class TypePetController {
                 .description(typePet.getDescription())
                 .build();
         TypePet updatedTypePet = typePetService.updateOneTypePet(id, tp);
+        return ResponseEntity.ok(updatedTypePet);
+    }
+
+    @PatchMapping(value="{idTypePet}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<TypePet> patchOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$") @Valid String id, @RequestBody @Valid PatchTypePet typePet){
+        TypePet tp = TypePet.builder()
+                .type(typePet.getType())
+                .description(typePet.getDescription())
+                ._id(id)
+                .build();
+        TypePet updatedTypePet = typePetService.patchOneTypePet(tp);
         return ResponseEntity.ok(updatedTypePet);
     }
 

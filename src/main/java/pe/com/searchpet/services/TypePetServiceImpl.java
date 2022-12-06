@@ -74,4 +74,28 @@ public class TypePetServiceImpl implements ITypePetService{
         typePetRepository.save(prevTypePet);
         return prevTypePet;
     }
+
+    @Override
+    public TypePet patchOneTypePet(TypePet tp) {
+        Optional<TypePet> prevTypePetOp = typePetRepository.findById(new ObjectId(tp.get_id()));
+        if(prevTypePetOp.isEmpty()){
+            throw new ResourceNotFoundException("El tipo de mascota que intenta actualizar no existe");
+        }
+        TypePet prevTypePet = prevTypePetOp.get();
+        Optional<TypePet> existTypePetByName = typePetRepository
+                .findPetByTypeDistincById(
+                    tp.getType()!=null
+                            ? tp.getType()
+                            : prevTypePet.getType(),
+                    new ObjectId(prevTypePet.get_id())
+                );
+        if(existTypePetByName.isPresent()){
+            throw new BadRequestException("El tipo de mascota especificado ya existe, intente probar con otro tipo");
+        }
+        if(tp.getType() != null) prevTypePet.setType(tp.getType());
+        if (tp.getDescription() != null) prevTypePet.setDescription(tp.getDescription());
+        prevTypePet.setUpdatedAt(new Date());
+        typePetRepository.save(prevTypePet);
+        return prevTypePet;
+    }
 }

@@ -19,4 +19,7 @@ public interface TypePetRepository extends MongoRepository<TypePet, ObjectId> {
     @Query("{'status': 1, 'type': ?0}")
     Optional<TypePet> findPetByType(String name);
 
+    @Query("{'status':1, 'type': ?0, '_id': {'$ne':?1} }")
+    Optional<TypePet> findPetByTypeDistincById(String name, ObjectId id);
+
 }

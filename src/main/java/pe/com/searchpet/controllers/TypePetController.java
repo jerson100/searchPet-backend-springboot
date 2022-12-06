@@ -55,9 +55,10 @@ public class TypePetController {
     public ResponseEntity<TypePet> updateOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$") @Valid String id, @RequestBody @Valid PutTypePet typePet){
         TypePet tp = TypePet.builder()
                 .type(typePet.getType())
+                ._id(id)
                 .description(typePet.getDescription())
                 .build();
-        TypePet updatedTypePet = typePetService.updateOneTypePet(id, tp);
+        TypePet updatedTypePet = typePetService.updateOneTypePet(tp);
         return ResponseEntity.ok(updatedTypePet);
     }
 

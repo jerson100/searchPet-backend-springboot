@@ -59,14 +59,15 @@ public class TypePetServiceImpl implements ITypePetService{
     }
 
     @Override
-    public TypePet updateOneTypePet(String id, TypePet t) {
-        Optional<TypePet> prevTypePetOp = typePetRepository.findById(new ObjectId(id));
+    public TypePet updateOneTypePet(TypePet t) {
+        Optional<TypePet> prevTypePetOp = typePetRepository.findById(new ObjectId(t.get_id()));
         if(prevTypePetOp.isEmpty()){
-            throw new ResourceNotFoundException("El tipo de mascota no existe");
+            throw new ResourceNotFoundException("El tipo de mascota que intenta actualizar no existe");
         }
         TypePet prevTypePet = prevTypePetOp.get();
-        if(prevTypePet.equals(t)){
-            throw new BadRequestException("El tipo de mascota especificado ya existe");
+        Optional<TypePet> existTypePetByName = typePetRepository.findPetByTypeDistincById(t.getType(), new ObjectId(prevTypePet.get_id()));
+        if(existTypePetByName.isPresent()){
+            throw new BadRequestException("El tipo de mascota especificado ya existe, intente probar con otro tipo");
         }
         prevTypePet.setType(t.getType());
         prevTypePet.setDescription(t.getDescription());

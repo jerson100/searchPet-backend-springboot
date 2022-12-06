@@ -12,7 +12,7 @@ import pe.com.searchpet.models.ApiError;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class GlobalErrorHandlerConfig {
+public class MyErrorHandlerConfig {
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseBody

@@ -23,7 +23,7 @@ public class TypePetServiceImpl implements ITypePetService{
     @Override
     public TypePet findPetById(String id){
         Optional<TypePet> typePet = typePetRepository.findById(new ObjectId(id));
-        if(!typePet.isPresent()){
+        if(typePet.isEmpty()){
             throw new ResourceNotFoundException("No se encontró la mascota con el id especificado");
         }
         return typePet.get();
@@ -37,7 +37,7 @@ public class TypePetServiceImpl implements ITypePetService{
     @Override
     public TypePet createPet(TypePet typePet) {
         Optional<TypePet> optionalTypePet = typePetRepository.findPetByType(typePet.getType());
-        if(!optionalTypePet.isEmpty()) throw new BadRequestException("El tipo de mascota ya existe");
+        if(optionalTypePet.isPresent()) throw new BadRequestException("El tipo de mascota ya existe");
         Date date = new Date();
         typePet.setCreatedAt(date);
         typePet.setUpdatedAt(date);
@@ -56,5 +56,22 @@ public class TypePetServiceImpl implements ITypePetService{
         typePet.setStatus(0);
         typePetRepository.save(typePet);
         LOG.info("Deleted TypePet:{}", typePetOptional.get());
+    }
+
+    @Override
+    public TypePet updateOneTypePet(String id, TypePet t) {
+        Optional<TypePet> prevTypePetOp = typePetRepository.findById(new ObjectId(id));
+        if(prevTypePetOp.isEmpty()){
+            throw new ResourceNotFoundException("El tipo de mascota no existe");
+        }
+        TypePet prevTypePet = prevTypePetOp.get();
+        if(prevTypePet.equals(t)){
+            throw new BadRequestException("El tipo de mascota especificado ya existe");
+        }
+        prevTypePet.setType(t.getType());
+        prevTypePet.setDescription(t.getDescription());
+        prevTypePet.setUpdatedAt(new Date());
+        typePetRepository.save(prevTypePet);
+        return prevTypePet;
     }
 }

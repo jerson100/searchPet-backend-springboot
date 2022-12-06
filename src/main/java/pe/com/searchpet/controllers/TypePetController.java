@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.TypePet;
+import pe.com.searchpet.models.PutTypePet;
 import pe.com.searchpet.services.TypePetServiceImpl;
 
 import java.util.List;
@@ -47,6 +48,16 @@ public class TypePetController {
     public ResponseEntity deleteTypePetById(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id especificado tiene el formato incorrecto") @Valid String id) {
         typePetService.deleteTypePetById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping(value="{idTypePet}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<TypePet> updateOneTypePet(@PathVariable(value = "idTypePet") @Pattern(regexp = "^[a-fA-F\\d]{24}$") @Valid String id, @RequestBody @Valid PutTypePet typePet){
+        TypePet tp = TypePet.builder()
+                .type(typePet.getType())
+                .description(typePet.getDescription())
+                .build();
+        TypePet updatedTypePet = typePetService.updateOneTypePet(id, tp);
+        return ResponseEntity.ok(updatedTypePet);
     }
 
 }

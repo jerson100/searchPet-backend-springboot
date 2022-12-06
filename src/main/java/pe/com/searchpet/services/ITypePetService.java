@@ -10,4 +10,5 @@ public interface ITypePetService {
     TypePet createPet(TypePet t);
     TypePet findPetById(String id);
     void deleteTypePetById(String id);
+    TypePet updateOneTypePet(String id, TypePet t);
 }

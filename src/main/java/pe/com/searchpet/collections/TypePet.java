@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Document(collection = "typepets")
 public class TypePet {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -21,6 +22,7 @@ public class TypePet {
     @NotNull(message = "El tipo de mascota es requerido")
     @NotBlank(message = "El tipo de mascota no debe contener solo espacios en blanco")
     @Size(min = 2, max = 30, message = "El tipo de mascota debe tener como mínimo 2 carácteres y como máximo 30")
+    @EqualsAndHashCode.Include
     private String type;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int status;

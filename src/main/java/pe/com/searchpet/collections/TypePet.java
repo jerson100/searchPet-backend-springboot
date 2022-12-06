@@ -14,6 +14,7 @@ import java.util.Date;
 @ToString
 @Document(collection = "typepets")
 public class TypePet {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String _id;
     @NotNull(message = "El tipo de mascota es requerido")
     @NotBlank(message = "El tipo de mascota no debe contener solo espacios en blanco")

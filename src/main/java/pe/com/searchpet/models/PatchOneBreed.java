@@ -1,7 +1,5 @@
 package pe.com.searchpet.models;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -14,12 +12,9 @@ import java.util.Set;
 @ToString
 @Getter
 @Setter
-public class CreateOneBreed {
-    @NotNull(message = "El tipo de mascota(idTypePet) es requerido")
+public class PatchOneBreed {
     @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El tipos de mascota(idTypePet) debe tener coincider con la expresión ^[a-fA-F\\d]{24}$")
     private String idTypePet;
-    @NotNull(message = "El nombre de la raza es requerido")
-    @NotBlank(message = "El nombre de la raza no puede contener solo espacios en blanco")
     @Size(min = 2, max = 40, message = "El nombre de la raza tiene que tener como mínimo 2 carácteres y como máximo 40")
     private String name;
     @Size(min = 2, max = 200, message = "El descripción de la raza tiene que tener como mínimo 2 carácteres y como máximo 200")

@@ -24,12 +24,12 @@ public class BreedServiceImpl implements IBreedService {
 
     private BreedRepository breedRepository;
     private TypePetRepository typePetRepository;
-    private MongoTemplate mongoTemplate;
+    //private MongoTemplate mongoTemplate;
     private final Logger LOG = LoggerFactory.getLogger(BreedServiceImpl.class);
 
     @Override
     public Breed findOneById(String id) {
-        Optional<Breed> breed = breedRepository.findOneByKeyValue("_id", id, 1);
+        Optional<Breed> breed = breedRepository.findById(id);
         if(breed.isEmpty()) throw new ResourceNotFoundException("No se encontró la raza especificada");
         return breed.get();
     }
@@ -38,18 +38,14 @@ public class BreedServiceImpl implements IBreedService {
     public List<Breed> all() {
         /*List<Breed> breeds = mongoTemplate.query(Breed.class)
                 .matching(Query.query(where("typePet.status").gte(1))).all();*/
-        return breedRepository
-                .findAll()
-                .stream()
-                .filter(breed -> breed.getStatus() == 1)
-                .toList();
+        return breedRepository.findAll();
     }
 
     @Override
     public void deleteOneById(String id) {
         Optional<Breed> breedOptional = breedRepository.findById(id);
-        if(breedOptional.isEmpty() || breedOptional.get() == null || breedOptional.get().getStatus() == 0){
-            throw new ResourceNotFoundException("No se pudo eliminar porque la raza no existe");
+        if(breedOptional.isEmpty()){
+            throw new ResourceNotFoundException("No se pudo eliminar la raza especificada por que no existe");
         }
         Breed breed = breedOptional.get();
         breed.setStatus(0);
@@ -58,30 +54,71 @@ public class BreedServiceImpl implements IBreedService {
 
     @Override
     public Breed createOne(Breed b) {
-        Optional<TypePet> typePetOptional = typePetRepository.findById(new ObjectId(b.getTypePet().get_id()));
-        if(typePetOptional.isEmpty()){
+        Optional<TypePet> typePetOptional = typePetRepository.findById(b.getIdTypePet());
+        if (typePetOptional.isEmpty()) {
             throw new BadRequestException("No se pudo crear la raza porque el tipo de mascota no existe");
         }
-        Optional<Breed> breedOptional = breedRepository.findOneByKeyValue("name", b.getName(), 1);
-        if(breedOptional.isPresent()){
+        Optional<Breed> breedOptional = breedRepository.findExistBreed( b.getName());
+        if (breedOptional.isPresent()) {
             throw new BadRequestException("No se pudo crear la raza porque el nombre de la raza ya existe");
         }
         b.setStatus(1);
-        return breedRepository.save(b);
+        Breed newBreed = breedRepository.save(b);
+        newBreed.setTypePet(typePetOptional.get());
+        LOG.info("Created Breed: ",newBreed);
+        return newBreed;
     }
 
     @Override
-    public Breed findByTypePetType(String typePet) {
-        Query query = new Query(Criteria
-                .where("name").is("Desconocido")
-                .and("status").is(1)
-                .and("typePet.type").is(typePet)
-        );
-        Breed breedOptional = mongoTemplate.findOne(query, Breed.class, "breeds");
-        LOG.info(String.valueOf(breedOptional));
-        if(breedOptional==null) return null;
-        return breedOptional;
+    public Breed updateOne(Breed b) {
+        Optional<Breed> breedOptional = breedRepository.findById(b.get_id());
+        if(breedOptional.isEmpty()) throw new ResourceNotFoundException("No se encontró la raza para el id especificado");
+        Breed currentBreed = breedOptional.get();
+        Optional<TypePet> typePetOptional = typePetRepository.findById(b.getIdTypePet());
+        if (typePetOptional.isEmpty()) {
+            throw new BadRequestException("No se pudo actualizar la raza porque el tipo de mascota no existe");
+        }
+        Optional<Breed> breedNameOptional = breedRepository.findExistBreed( b.getName());
+        if (breedNameOptional.isPresent()) {
+            throw new BadRequestException("No se pudo actualizar la raza porque ya existe uno con el mismo nombre");
+        }
+        currentBreed.setTypePet(typePetOptional.get());
+        currentBreed.setIdTypePet(new ObjectId(typePetOptional.get().get_id()));
+        currentBreed.setName(b.getName());
+        currentBreed.setDescription(b.getDescription());
+        currentBreed.setCharacteristics(b.getCharacteristics());
+        LOG.info("Updated Breed: ",currentBreed);
+        return breedRepository.save(currentBreed);
     }
+
+    @Override
+    public Breed updatePatchOne(Breed b) {
+        Optional<Breed> breedOptional = breedRepository.findById(b.get_id());
+        if(breedOptional.isEmpty()) throw new ResourceNotFoundException("No se encontró la raza para el id especificado");
+        Breed breed = breedOptional.get();
+        if(b.getIdTypePet() != null){
+            Optional<TypePet> typePetOptional = typePetRepository.findById(b.getIdTypePet());
+            if (typePetOptional.isEmpty()) {
+                throw new BadRequestException("No se pudo actualizar la raza porque el tipo de mascota no existe");
+            }
+            TypePet typePet = typePetOptional.get();
+            breed.setTypePet(typePet);
+            breed.setIdTypePet(b.getIdTypePet());
+        }
+        if(b.getName()!=null){
+            Optional<Breed> breedNameOptional = breedRepository.findExistBreed( b.getName());
+            if (breedNameOptional.isPresent()) {
+                throw new BadRequestException("No se pudo actualizar la raza porque ya existe uno con el mismo nombre");
+            }
+            breed.setName(b.getName());
+        }
+        if(b.getDescription()!=null) breed.setDescription(b.getDescription());
+        if(b.getCharacteristics()!=null) breed.setCharacteristics(b.getCharacteristics());
+        Breed patchBreed = breedRepository.save(breed);
+        LOG.info("Patch Breed: ",patchBreed);
+        return patchBreed;
+    }
+
 
 
 }

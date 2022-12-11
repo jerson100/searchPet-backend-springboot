@@ -3,6 +3,7 @@ package pe.com.searchpet.controllers;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.Breed;
 import pe.com.searchpet.collections.TypePet;
 import pe.com.searchpet.models.CreateOneBreed;
+import pe.com.searchpet.models.PatchOneBreed;
+import pe.com.searchpet.models.UpdateOneBreed;
 import pe.com.searchpet.services.BreedServiceImpl;
 
 import java.util.List;
@@ -23,30 +26,48 @@ public class BreedController {
 
     private BreedServiceImpl breedService;
 
-    @GetMapping("{idBreed}/{typePet}")
-    public ResponseEntity<Breed> test(@PathVariable(value = "idBreed") String idBreed, @PathVariable(value = "typePet") String typePet){
-        Breed b = breedService.findByTypePetType(typePet);
-        return ResponseEntity.ok(b);
-    }
-
     @PostMapping(value = "",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CreateOneBreed> createBreed(@RequestBody @Valid CreateOneBreed breed){
+    public ResponseEntity<Breed> createBreed(@RequestBody @Valid CreateOneBreed breed){
         Breed newBreed = breedService.createOne(Breed
                 .builder()
                 .description(breed.getDescription())
                 .name(breed.getName())
                 .characteristics(breed.getCharacteristics())
-                .typePet(TypePet
-                        .builder()
-                        ._id(breed.getTypePet())
-                        .build())
+                .idTypePet(new ObjectId(breed.getIdTypePet()))
                 .build());
-        breed.set_id(newBreed.get_id());
-        breed.setCreatedAt(newBreed.getCreatedAt());
-        breed.setUpdatedAt(newBreed.getUpdatedAt());
-        return new ResponseEntity<>(breed, HttpStatus.CREATED);
+        return new ResponseEntity<>(newBreed, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "{idBreed}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Breed> updateBreed(@PathVariable("idBreed") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id de la raza no tiene el formato correcto") @Valid String idBreed, @RequestBody @Valid UpdateOneBreed breed){
+        Breed updateBreed = breedService.updateOne(Breed
+                .builder()
+                .description(breed.getDescription())
+                .name(breed.getName())
+                .characteristics(breed.getCharacteristics())
+                .idTypePet(breed.getIdTypePet()!=null?new ObjectId(breed.getIdTypePet()):null)
+                ._id(idBreed)
+                .build());
+        return new ResponseEntity<>(updateBreed, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "{idBreed}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Breed> patchBreed(@PathVariable("idBreed") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id de la raza no tiene el formato correcto") @Valid String idBreed, @RequestBody @Valid PatchOneBreed breed){
+        Breed patchBreed = breedService.updatePatchOne(Breed
+                .builder()
+                .description(breed.getDescription())
+                .name(breed.getName())
+                .characteristics(breed.getCharacteristics())
+                .idTypePet(breed.getIdTypePet()!=null?new ObjectId(breed.getIdTypePet()):null)
+                ._id(idBreed)
+                .build());
+        return new ResponseEntity<>(patchBreed, HttpStatus.OK);
     }
 
     @GetMapping(value = "{idBreed}",

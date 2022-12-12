@@ -14,6 +14,15 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
     @Query("{ '$or':[ {'username': ?0 }, { 'email':  ?1 }]}")
     Optional<User> findUserByEmailAndUsername(String username, String email);
 
+    @Query("{ '$and': [ { '$or':[ {'username': ?0 }, { 'email':  ?1 } ] } , { _id: { '$ne': ?2 }  } ] }")
+    Optional<User> findUserByEmailAndUsernameDistinctId(String username, String email, String idUser);
+
+    @Query("{ 'email': ?0, _id: { '$ne': ?1} }")
+    Optional<User> findUserByEmail(String email, String idUser);
+
+    @Query("{ 'username': ?0, _id: { '$ne': ?1} }")
+    Optional<User> findUserByUsername(String username, String idUser);
+
     @Query("{ 'status': 1}")
     List<User> findAll();
 

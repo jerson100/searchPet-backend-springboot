@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.User;
 import pe.com.searchpet.models.PatchOneUser;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api/v1/users")
+@Validated
 public class UserController {
 
     private final UserServiceImpl userService;
@@ -51,13 +53,13 @@ public class UserController {
     }
 
     @DeleteMapping(value = "{idUser}")
-    public ResponseEntity deleteOneUser(@PathVariable @Valid @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto") String idUser){
+    public ResponseEntity deleteOneUser(@PathVariable(value = "idUser") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto") @Valid String idUser){
         userService.deleteOneUser(idUser);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "{idUser}")
-    public ResponseEntity<User> updateOneUser(@PathVariable @Valid @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto") String idUser, @RequestBody @Valid UpdateOneUser user){
+    public ResponseEntity<User> updateOneUser(@PathVariable(value = "idUser") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto")  @Valid String idUser, @RequestBody @Valid UpdateOneUser user){
         User updatedUser  = userService.putOneUser(
             User.builder()
             ._id(idUser)
@@ -76,7 +78,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "{idUser}")
-    public ResponseEntity<User> patchOneUser(@PathVariable @Valid @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto") String idUser, @RequestBody @Valid PatchOneUser user){
+    public ResponseEntity<User> patchOneUser(@PathVariable(value = "idUser") @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id del usuario no tiene el formato correcto")  @Valid  String idUser, @RequestBody @Valid PatchOneUser user){
         User updatedUser  = userService.patchOneUser(
             User.builder()
             ._id(idUser)

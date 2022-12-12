@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.Breed;
-import pe.com.searchpet.collections.TypePet;
 import pe.com.searchpet.models.CreateOneBreed;
 import pe.com.searchpet.models.PatchOneBreed;
 import pe.com.searchpet.models.UpdateOneBreed;

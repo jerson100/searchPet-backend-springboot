@@ -1,4 +1,4 @@
-package pe.com.searchpet.models;
+package pe.com.searchpet.models.requests.breeds;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

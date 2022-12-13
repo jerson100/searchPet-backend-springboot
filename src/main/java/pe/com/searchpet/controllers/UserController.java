@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.User;
-import pe.com.searchpet.models.PatchOneUser;
-import pe.com.searchpet.models.UpdateOneUser;
+import pe.com.searchpet.models.requests.users.PatchOneUser;
+import pe.com.searchpet.models.requests.users.UpdateOneUser;
 import pe.com.searchpet.services.UserServiceImpl;
 import pe.com.searchpet.exceptions.BadRequestException;
-import pe.com.searchpet.models.CreateOneUser;
+import pe.com.searchpet.models.requests.users.CreateOneUser;
 
 import java.util.List;
 

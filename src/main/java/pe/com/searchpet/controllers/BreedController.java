@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.Breed;
-import pe.com.searchpet.models.CreateOneBreed;
-import pe.com.searchpet.models.PatchOneBreed;
-import pe.com.searchpet.models.UpdateOneBreed;
+import pe.com.searchpet.models.requests.breeds.CreateOneBreed;
+import pe.com.searchpet.models.requests.breeds.PatchOneBreed;
+import pe.com.searchpet.models.requests.breeds.UpdateOneBreed;
 import pe.com.searchpet.services.BreedServiceImpl;
 
 import java.util.List;

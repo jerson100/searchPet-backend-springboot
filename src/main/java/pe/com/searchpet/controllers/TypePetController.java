@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pe.com.searchpet.collections.TypePet;
-import pe.com.searchpet.models.PatchTypePet;
-import pe.com.searchpet.models.PutTypePet;
+import pe.com.searchpet.models.requests.typepets.PatchTypePet;
+import pe.com.searchpet.models.requests.typepets.PutTypePet;
 import pe.com.searchpet.services.TypePetServiceImpl;
 
 import java.util.List;

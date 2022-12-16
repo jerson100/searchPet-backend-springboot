@@ -20,6 +20,7 @@ public class CreateOneLostPet {
     @NotNull(message = "Las mascotas(pets) son requeridas")
     private Set<@Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id Pet debe tener coincider con la expresión ^[a-fA-F\\d]{24}$") String> pets;
     @NotNull(message = "El idUser es requerido")
+    @Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El idUser debe tener coincider con la expresión ^[a-fA-F\\d]{24}$")
     private String idUser;
     private List<MultipartFile> images;
     @NotNull(message = "La latitud(latitude) es requerida")

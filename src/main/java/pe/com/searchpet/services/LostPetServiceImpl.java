@@ -12,7 +12,7 @@ import pe.com.searchpet.collections.Pet;
 import pe.com.searchpet.collections.User;
 import pe.com.searchpet.enums.EStatus;
 import pe.com.searchpet.exceptions.BadRequestException;
-import pe.com.searchpet.repository.LostpetRepository;
+import pe.com.searchpet.repository.LostPetRepository;
 import pe.com.searchpet.repository.PetRepository;
 import pe.com.searchpet.repository.UserRepository;
 
@@ -25,8 +25,7 @@ import java.util.*;
 public class LostPetServiceImpl implements ILostPetService{
 
     @Autowired
-    private LostpetRepository lostpetRepository;
-
+    private LostPetRepository lostpetRepository;
     @Autowired
     private PetRepository petRepository;
     @Autowired
@@ -55,16 +54,16 @@ public class LostPetServiceImpl implements ILostPetService{
         Set<String> petImages = new LinkedHashSet<>();
         for(MultipartFile m:images){
             Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", cloudinary_cloud_name,
-                "api_key", cloudinary_api_key,
-                "api_secret", cloudinary_api_secret,
-                "secure", true));
+                    "cloud_name", cloudinary_cloud_name,
+                    "api_key", cloudinary_api_key,
+                    "api_secret", cloudinary_api_secret,
+                    "secure", true));
             Map params = ObjectUtils.asMap(
-                "use_filename", true,
-                "unique_filename", false,
-                "overwrite", true,
-                "resource_type", "auto",
-                "folder","sPetJava/pets/losts"
+                    "use_filename", true,
+                    "unique_filename", false,
+                    "overwrite", true,
+                    "resource_type", "auto",
+                    "folder","sPetJava/pets/losts"
             );
             try {
                 File f= Files.createTempFile("", m.getOriginalFilename()).toFile();
@@ -77,10 +76,10 @@ public class LostPetServiceImpl implements ILostPetService{
                 throw new BadRequestException("No se pudo crear la mascota perdida porque no se logró guardar la imagen, vuelva a intentarlo más tarde, gracias.");
             }
         }
+        lostPet.setUser(userOptional.get());
+        lostPet.setStatus(EStatus.ACTIVE.getStatus());
+        lostPet.setImages(petImages);
         LostPet l = lostpetRepository.save(lostPet);
-        l.setUser(userOptional.get());
-        l.setStatus(EStatus.ACTIVE.getStatus());
-        l.setImages(petImages);
         return l;
     }
 

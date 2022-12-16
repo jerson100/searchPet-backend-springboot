@@ -17,6 +17,7 @@ import pe.com.searchpet.collections.LostPet;
 import pe.com.searchpet.models.requests.lostPet.CreateOneLostPet;
 import pe.com.searchpet.services.LostPetServiceImpl;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,16 +33,13 @@ public class LostPetController {
     public ResponseEntity<LostPet> createOneLostPet(@Valid @ModelAttribute CreateOneLostPet lostPet, BindingResult result){
         LostPet newLostPet = lostPetService.createOneLostPet(LostPet
             .builder()
-            .idPets(lostPet
-                .getPets()
-                .stream()
-                .map(p -> new ObjectId(p.toString()))
-                .collect(Collectors.toSet())
+            .idPets(
+                Arrays.stream(lostPet.getPets().split(",")).map(ObjectId::new).collect(Collectors.toSet())
             )
             .idUser(new ObjectId(lostPet.getIdUser()))
             .location(new GeoJsonPoint(
-                lostPet.getLatitude(),
-                lostPet.getLongitude()
+                lostPet.getLongitude(),
+                lostPet.getLatitude()
             ))
             .description(lostPet.getDescription())
             .build(),

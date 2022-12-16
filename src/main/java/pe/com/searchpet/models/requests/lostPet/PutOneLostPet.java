@@ -16,7 +16,6 @@ import java.util.Set;
 @ToString
 @Setter
 @Getter
-@Document(collection = "lostpets")
 public class PutOneLostPet {
     @NotNull(message = "Las mascotas(pets) son requeridas")
     private Set<@Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id Pet debe tener coincider con la expresión ^[a-fA-F\\d]{24}$") String> pets;

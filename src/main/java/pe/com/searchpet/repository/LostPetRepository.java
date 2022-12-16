@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import pe.com.searchpet.collections.LostPet;
 
 @Repository
-public interface LostpetRepository extends MongoRepository<LostPet, ObjectId> {
+public interface LostPetRepository extends MongoRepository<LostPet, ObjectId> {
 }

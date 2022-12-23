@@ -16,10 +16,8 @@ import java.util.Set;
 @Setter
 @Getter
 public class PatchOneLostPet {
+    @Size(min = 1, message = "Al menos debe ingresar el id de una mascota perdida")
     private Set<@Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id Pet debe tener coincider con la expresión ^[a-fA-F\\d]{24}$") String> pets;
-    @NotNull(message = "El idUser es requerido")
-    private String idUser;
-    private List<MultipartFile> images;
     private double latitude;
     private double longitude;
     @Size(min = 3, max = 200, message = "La descripción debe tener como mínimo 3 carácteres y máximo 200")

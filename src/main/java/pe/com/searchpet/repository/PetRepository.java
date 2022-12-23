@@ -15,6 +15,9 @@ public interface PetRepository extends MongoRepository<Pet, ObjectId> {
     @Query("{'name': ?0, 'status': 1}")
     Optional<Pet> findByName(String name);
 
+    @Query("{'status': 1, '_id': { $in: ?0 }}")
+    List<Pet> getPetsById(List<ObjectId> ids);
+
     @Query("{'name': ?0, 'status': 1, '_id': { '$ne': ?1 } }")
     Optional<Pet> findByNameAndId(String name, String id);
     //@Query("{'_id': ?0, 'status': 1}")

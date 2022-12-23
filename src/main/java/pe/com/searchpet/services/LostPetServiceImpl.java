@@ -3,6 +3,8 @@ package pe.com.searchpet.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class LostPetServiceImpl implements ILostPetService{
 
+    private final Logger LOG = LoggerFactory.getLogger(LostPetServiceImpl.class);
     @Autowired
     private LostPetRepository lostpetRepository;
     @Autowired
@@ -85,7 +89,50 @@ public class LostPetServiceImpl implements ILostPetService{
 
     @Override
     public LostPet updateOneLostPet(LostPet lostPet) {
-        return null;
+        Optional<LostPet> lostPetOptional = lostpetRepository.findById(lostPet.get_id());
+        if(lostPetOptional.isEmpty()){
+            throw new ResourceNotFoundException("El registro de la mascota perdida con el id especificado no existe");
+        };
+        List<Pet> pets = petRepository.getPetsById(lostPet.getIdPets().stream().toList());
+        if(lostPet.getIdPets().size()==0 || pets.size() != lostPet.getIdPets().size()){
+            throw new BadRequestException("No se pudo actualizar el registro porque al menos una mascota con el id indicado no existe");
+        }
+        LostPet currentLostPet = lostPetOptional.get();
+        currentLostPet.setIdPets(lostPet.getIdPets());
+        currentLostPet.setPets(pets.stream().collect(Collectors.toSet()));
+        currentLostPet.setDescription(lostPet.getDescription());
+        currentLostPet.setLocation(lostPet.getLocation());
+        lostpetRepository.save(currentLostPet);
+        return currentLostPet;
+    }
+
+    @Override
+    public LostPet patchOneLostPet(LostPet lostPet) {
+        Optional<LostPet> lostPetOptional = lostpetRepository.findById(lostPet.get_id());
+        if(lostPetOptional.isEmpty()){
+            throw new ResourceNotFoundException("El registro de la mascota perdida con el id especificado no existe");
+        };
+
+        LostPet currentLostPet = lostPetOptional.get();
+        if(lostPet.getIdPets()!=null){
+            List<Pet> pets = petRepository.getPetsById(lostPet.getIdPets().stream().toList());
+            if(lostPet.getIdPets().size()==0 || pets.size() != lostPet.getIdPets().size()){
+                throw new BadRequestException("No se pudo actualizar el registro porque al menos una mascota con el id indicado no existe");
+            }
+            currentLostPet.setPets(pets.stream().collect(Collectors.toSet()));
+            currentLostPet.setIdPets(lostPet.getIdPets());
+        }
+
+        LOG.info(lostPet.toString());
+        if(lostPet.getDescription()!=null){
+            currentLostPet.setDescription(lostPet.getDescription());
+        }
+
+        if(lostPet.getLocation()!=null){
+            currentLostPet.setLocation(lostPet.getLocation());
+        }
+
+        return lostpetRepository.save(currentLostPet);
     }
 
     @Override

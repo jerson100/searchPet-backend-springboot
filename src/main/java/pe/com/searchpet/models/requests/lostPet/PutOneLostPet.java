@@ -18,10 +18,8 @@ import java.util.Set;
 @Getter
 public class PutOneLostPet {
     @NotNull(message = "Las mascotas(pets) son requeridas")
+    @Size(min = 1, message = "Al menos debe ingresar el id de una mascota perdida")
     private Set<@Pattern(regexp = "^[a-fA-F\\d]{24}$", message = "El id Pet debe tener coincider con la expresión ^[a-fA-F\\d]{24}$") String> pets;
-    @NotNull(message = "El idUser es requerido")
-    private String idUser;
-    private List<MultipartFile> images;
     @NotNull(message = "La latitud(latitude) es requerida")
     private double latitude;
     @NotNull(message = "La longitud(longitude) es requerida")

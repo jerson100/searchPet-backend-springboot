@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.annotation.Collation;
+import org.springframework.data.mongodb.core.mapping.Document;
 import pe.com.searchpet.models.Characteristic;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Collation(value = "pets")
+@Document(value = "pets")
 public class Pet {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id

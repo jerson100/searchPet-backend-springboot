@@ -12,6 +12,7 @@ import pe.com.searchpet.collections.Pet;
 import pe.com.searchpet.collections.User;
 import pe.com.searchpet.enums.EStatus;
 import pe.com.searchpet.exceptions.BadRequestException;
+import pe.com.searchpet.exceptions.ResourceNotFoundException;
 import pe.com.searchpet.repository.LostPetRepository;
 import pe.com.searchpet.repository.PetRepository;
 import pe.com.searchpet.repository.UserRepository;
@@ -42,7 +43,7 @@ public class LostPetServiceImpl implements ILostPetService{
     public LostPet createOneLostPet(LostPet lostPet, List<MultipartFile> images) {
         Optional<User> userOptional = userRepository.findById(lostPet.getIdUser().toString());
         if(userOptional.isEmpty()){
-            throw new BadRequestException("No se pudo crear la mascota perdida porque el usuario con el idEspecificado no existe");
+            throw new BadRequestException("No se pudo crear la mascota perdida porque el usuario con el id especificado no existe");
         }
         Set<ObjectId> pets = lostPet.getIdPets();
         for(ObjectId id:pets){
@@ -79,8 +80,7 @@ public class LostPetServiceImpl implements ILostPetService{
         lostPet.setUser(userOptional.get());
         lostPet.setStatus(EStatus.ACTIVE.getStatus());
         lostPet.setImages(petImages);
-        LostPet l = lostpetRepository.save(lostPet);
-        return l;
+        return lostpetRepository.save(lostPet);
     }
 
     @Override
@@ -90,16 +90,37 @@ public class LostPetServiceImpl implements ILostPetService{
 
     @Override
     public void deleteOneById(String id) {
-
+        Optional<LostPet> lostPetOptional = lostpetRepository.findById(id);
+        if(lostPetOptional.isEmpty() || lostPetOptional
+                .get()
+                .getPets()
+                .size() == 0){
+            throw new ResourceNotFoundException("No se pudo eliminar el registro de la mascota perdida porque no existe");
+        }
+        LostPet p = lostpetRepository.findById(new ObjectId(id)).get();
+        p.setStatus(EStatus.INACTIVE.getStatus());
+        lostpetRepository.save(p);
     }
 
     @Override
     public List<LostPet> all() {
-        return null;
+        return lostpetRepository
+                .findAll()
+                .stream()
+                .filter(lostPet -> lostPet.getPets().size() > 0)
+                .toList();
     }
 
     @Override
     public LostPet findOneById(String id) {
-        return null;
+        Optional<LostPet> lostPetOptional = lostpetRepository.findById(id);
+        if(lostPetOptional.isEmpty() || lostPetOptional
+                .get()
+                .getPets()
+                .size() == 0){
+            throw new ResourceNotFoundException("El registro de la mascota perdida para el id especificado no existe");
+        }
+        return lostPetOptional.get();
     }
+
 }
